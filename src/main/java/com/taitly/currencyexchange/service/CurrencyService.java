@@ -8,6 +8,7 @@ import com.taitly.currencyexchange.mapper.CurrencyMapper;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();
@@ -15,7 +16,7 @@ public class CurrencyService {
     private final CurrencyMapper currencyMapper =  CurrencyMapper.getInstance();
 
     public List<CurrencyDto> findAll() {
-        return currencyDao.findAll().stream().map(currencyMapper :: toDto).toList();
+        return currencyDao.findAll().stream().map(currencyMapper :: toDto).collect(Collectors.toList());
     }
 
     public CurrencyDto findByCode(String code) {

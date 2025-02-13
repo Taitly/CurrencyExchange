@@ -76,13 +76,18 @@ public class CurrencyDao {
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            generatedKeys.next();
-
-            currency.setId(generatedKeys.getLong("id"));
-
-            return currency;
+            if (generatedKeys.next()) {
+                Long id = generatedKeys.getLong(1);
+                return new Currency(
+                        id,
+                        currency.getCode(),
+                        currency.getName(),
+                        currency.getSign()
+                );
+            }
+            throw new SQLException("No ID obtained");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Something went wrong when you tried to connect database.");
         }
     }
 
