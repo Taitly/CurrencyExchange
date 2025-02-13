@@ -6,6 +6,7 @@ import lombok.Value;
 @Value
 @Builder
 public class CurrencyDto {
+    Long id;
     String code;
     String name;
     String sign;

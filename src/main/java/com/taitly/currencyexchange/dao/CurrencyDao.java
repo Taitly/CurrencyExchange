@@ -52,6 +52,7 @@ public class CurrencyDao {
     public Optional<Currency> findByCode(String code) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE)) {
+
             preparedStatement.setObject(1, code);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -65,7 +66,7 @@ public class CurrencyDao {
         }
     }
 
-    public Currency save(Currency currency) {
+    public Currency create(Currency currency) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CURRENCY, RETURN_GENERATED_KEYS)) {
 
