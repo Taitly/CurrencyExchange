@@ -70,9 +70,9 @@ public class CurrencyDao {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CURRENCY, RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setObject(1, currency.getCode());
-            preparedStatement.setObject(2, currency.getName());
-            preparedStatement.setObject(3, currency.getSign());
+            preparedStatement.setString(1, currency.getCode());
+            preparedStatement.setString(2, currency.getName());
+            preparedStatement.setString(3, currency.getSign());
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
