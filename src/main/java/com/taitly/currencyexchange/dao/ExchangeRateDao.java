@@ -123,7 +123,7 @@ public class ExchangeRateDao {
 
             preparedStatement.setBigDecimal(1, exchangeRate.getRate());
             preparedStatement.setString(2, exchangeRate.getBaseCurrency().getCode());
-            preparedStatement.setString(2, exchangeRate.getTargetCurrency().getCode());
+            preparedStatement.setString(3, exchangeRate.getTargetCurrency().getCode());
             preparedStatement.executeUpdate();
 
             return exchangeRate;
