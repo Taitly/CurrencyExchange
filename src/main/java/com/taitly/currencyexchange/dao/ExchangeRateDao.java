@@ -2,6 +2,7 @@ package com.taitly.currencyexchange.dao;
 
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
+import com.taitly.currencyexchange.exception.DatabaseException;
 import com.taitly.currencyexchange.util.ConnectionManager;
 
 import java.sql.*;
@@ -70,7 +71,7 @@ public class ExchangeRateDao {
             }
             return exchangeRates;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Failed to read exchange rates from the database.");
         }
     }
 
@@ -88,11 +89,19 @@ public class ExchangeRateDao {
             }
             return Optional.ofNullable(exchangeRate);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Failed to read the exchange rate for a pair of codes %s/%s from the database.".formatted(baseCurrencyCode, targetCurrencyCode));
         }
     }
 
     public ExchangeRate create(ExchangeRate exchangeRate) {
+        String baseCurrencyCode = exchangeRate.getBaseCurrency().getCode();
+        String targetCurrencyCode = exchangeRate.getTargetCurrency().getCode();
+        Optional<ExchangeRate> existingRate = findByPairCode(baseCurrencyCode, targetCurrencyCode);
+
+        if(existingRate.isPresent()) {
+            throw new DatabaseException("Exchange rate for a pair of codes %s/%s already exists.".formatted(baseCurrencyCode, targetCurrencyCode));
+        }
+
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_EXCHANGE_RATE, RETURN_GENERATED_KEYS)) {
 
@@ -104,16 +113,11 @@ public class ExchangeRateDao {
             ResultSet generateKeys = preparedStatement.getGeneratedKeys();
             if (generateKeys.next()) {
                 Long id = generateKeys.getLong(1);
-                return new ExchangeRate(
-                        id,
-                        exchangeRate.getBaseCurrency(),
-                        exchangeRate.getTargetCurrency(),
-                        exchangeRate.getRate()
-                );
+                exchangeRate.setId(id);
             }
-            throw new SQLException("No ID obtained");
+            return exchangeRate;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Failed to add exchange rate for a pair of codes %s/%s to the database.".formatted(baseCurrencyCode, targetCurrencyCode));
         }
     }
 
@@ -128,7 +132,7 @@ public class ExchangeRateDao {
 
             return exchangeRate;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Failed to update exchange rate for that pair of codes.");
         }
     }
 

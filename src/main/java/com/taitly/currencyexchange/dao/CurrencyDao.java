@@ -1,6 +1,7 @@
 package com.taitly.currencyexchange.dao;
 
 import com.taitly.currencyexchange.entity.Currency;
+import com.taitly.currencyexchange.exception.DatabaseException;
 import com.taitly.currencyexchange.util.ConnectionManager;
 
 import java.sql.*;
@@ -45,7 +46,7 @@ public class CurrencyDao {
             }
             return currencies;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Failed to read currencies from the database.");
         }
     }
 
@@ -62,11 +63,17 @@ public class CurrencyDao {
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Failed to read currency by code " + code + " from the database.");
         }
     }
 
     public Currency create(Currency currency) {
+        Optional<Currency> existingCurrency = findByCode(currency.getCode());
+
+        if (existingCurrency.isPresent()) {
+            throw new DatabaseException("Currency with code " + currency.getCode() + " already exists in the database.");
+        }
+
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CURRENCY, RETURN_GENERATED_KEYS)) {
 
@@ -78,16 +85,11 @@ public class CurrencyDao {
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getLong(1);
-                return new Currency(
-                        id,
-                        currency.getCode(),
-                        currency.getName(),
-                        currency.getSign()
-                );
+                currency.setId(id);
             }
-            throw new SQLException("No ID obtained");
+            return currency;
         } catch (SQLException e) {
-            throw new RuntimeException("Something went wrong when you tried to connect database.");
+            throw new DatabaseException("Failed to add currency " + currency.getName() + " to the database");
         }
     }
 
