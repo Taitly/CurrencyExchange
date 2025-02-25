@@ -5,6 +5,8 @@ import com.taitly.currencyexchange.dto.CurrencyExchangeDto;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
 import com.taitly.currencyexchange.exception.DataNotFoundException;
+import com.taitly.currencyexchange.validation.CurrencyValidator;
+import com.taitly.currencyexchange.validation.ExchangeRateValidator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,9 +16,15 @@ public class CurrencyExchangeService {
     private static final CurrencyExchangeService INSTANCE = new CurrencyExchangeService();
     private static final String BASE_CROSS_CURRENCY_CODE = "USD";
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+    private final CurrencyValidator currencyValidator = new CurrencyValidator();
+    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
 
 
     public CurrencyExchangeDto exchange(String from, String to, String amount) {
+        currencyValidator.checkCode(from);
+        currencyValidator.checkCode(to);
+        exchangeRateValidator.checkAmount(amount);
+
         Optional<ExchangeRate> optionalExchangeRate = getOptionalExchangeRate(from, to);
 
         if (optionalExchangeRate.isPresent()) {
@@ -37,7 +45,7 @@ public class CurrencyExchangeService {
         throw new DataNotFoundException("No exchange rate was found for the specified currency code pair");
     }
 
-    public Optional<ExchangeRate> getOptionalExchangeRate(String from, String to) {
+    private Optional<ExchangeRate> getOptionalExchangeRate(String from, String to) {
         Optional<ExchangeRate> optionalExchangeRate = getDirectExchangeRate(from, to);
 
         if (optionalExchangeRate.isEmpty()) {
