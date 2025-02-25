@@ -2,6 +2,7 @@ package com.taitly.currencyexchange.validation;
 
 import com.taitly.currencyexchange.exception.InvalidDataException;
 
+import java.util.Currency;
 import java.util.regex.Pattern;
 
 public class CurrencyValidator {
@@ -31,6 +32,8 @@ public class CurrencyValidator {
         if (!Pattern.matches(CODE_REGEX, code)) {
             throw new InvalidDataException("Currency code must be exactly three uppercase letters.");
         }
+
+        checkCurrencyExist(code);
     }
 
     public void checkSign(String sign) {
@@ -40,6 +43,14 @@ public class CurrencyValidator {
 
         if (!Pattern.matches(CURRENCY_SIGN_REGEX, sign)) {
             throw new InvalidDataException("Currency sign must be 1 to 5 characters long and contain only letters or special symbols.");
+        }
+    }
+
+    private void checkCurrencyExist(String code) {
+        try {
+            Currency.getInstance(code);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDataException("This currency doesn't exist");
         }
     }
 }
