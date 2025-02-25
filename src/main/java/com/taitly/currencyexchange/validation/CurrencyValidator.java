@@ -26,7 +26,7 @@ public class CurrencyValidator {
 
     public void checkCode(String code) {
         if (code == null || code.isEmpty()) {
-            throw new InvalidDataException("Currency code cannot be empty");
+            throw new InvalidDataException("Currency code cannot be empty.");
         }
 
         if (!Pattern.matches(CODE_REGEX, code)) {
@@ -38,7 +38,7 @@ public class CurrencyValidator {
 
     public void checkSign(String sign) {
         if (sign == null || sign.isEmpty()) {
-            throw new InvalidDataException("Currency sign cannot be empty");
+            throw new InvalidDataException("Currency sign cannot be empty.");
         }
 
         if (!Pattern.matches(CURRENCY_SIGN_REGEX, sign)) {
@@ -50,7 +50,7 @@ public class CurrencyValidator {
         try {
             Currency.getInstance(code);
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("This currency doesn't exist");
+            throw new InvalidDataException("This currency doesn't exist.");
         }
     }
 }
