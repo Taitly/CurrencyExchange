@@ -9,6 +9,8 @@ import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
 import com.taitly.currencyexchange.exception.DataNotFoundException;
 import com.taitly.currencyexchange.exception.DatabaseException;
 import com.taitly.currencyexchange.mapper.ExchangeRateMapper;
+import com.taitly.currencyexchange.validation.CurrencyValidator;
+import com.taitly.currencyexchange.validation.ExchangeRateValidator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,12 +22,16 @@ public class ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private final ExchangeRateMapper exchangeRateMapper = ExchangeRateMapper.getInstance();
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
+    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
+    private final CurrencyValidator currencyValidator = new CurrencyValidator();
 
     public List<ExchangeRateDto> findAll() {
      return exchangeRateDao.findAll().stream().map(exchangeRateMapper :: toDto).toList();
     }
 
     public ExchangeRateDto findByPairCode(String pairCode) {
+        exchangeRateValidator.checkPairCode(pairCode);
+
         String baseCurrencyCode = pairCode.substring(0, 3);
         String targetCurrencyCode = pairCode.substring(3, 6);
 
@@ -36,6 +42,10 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateDto create(String baseCurrencyCode, String targetCurrencyCode, String rateValue) {
+        currencyValidator.checkCode(baseCurrencyCode);
+        currencyValidator.checkCode(targetCurrencyCode);
+        exchangeRateValidator.checkRate(rateValue);
+
         Currency baseCurrency = currencyDao.findByCode(baseCurrencyCode)
                 .orElseThrow(() -> new DataNotFoundException("Currency with code %s not found in database".formatted(baseCurrencyCode)));
         Currency targetCurrency = currencyDao.findByCode(targetCurrencyCode)
@@ -56,6 +66,9 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateDto update(String pairCode, String rateValue) {
+        exchangeRateValidator.checkPairCode(pairCode);
+        exchangeRateValidator.checkRate(rateValue);
+
         BigDecimal rate = new BigDecimal(rateValue);
 
         ExchangeRateDto exchangeRateDto = findByPairCode(pairCode);
