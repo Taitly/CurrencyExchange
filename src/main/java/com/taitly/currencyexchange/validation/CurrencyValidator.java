@@ -37,11 +37,7 @@ public class CurrencyValidator {
     }
 
     public void checkSign(String sign) {
-        if (sign == null || sign.isEmpty()) {
-            throw new InvalidDataException("Currency sign cannot be empty.");
-        }
-
-        if (!Pattern.matches(CURRENCY_SIGN_REGEX, sign)) {
+        if (sign == null || sign.isEmpty() || !Pattern.matches(CURRENCY_SIGN_REGEX, sign)) {
             throw new InvalidDataException("Currency sign must be 1 to 5 characters long and contain only letters or special symbols.");
         }
     }
