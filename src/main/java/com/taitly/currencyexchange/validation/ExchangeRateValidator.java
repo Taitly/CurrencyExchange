@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class ExchangeRateValidator {
     private static final String PAIR_CODE_REGEX = "^[A-Z]{3}[A-Z]{3}$";
-    private static final String RATE_REGEX = "^(0|[1-9][0-9]*)(\\.[0-9])?$";
+    private static final String RATE_REGEX = "^(0|[1-9][0-9]*)(\\.[0-9]+)?$";
     private static final String AMOUNT_REGEX = "^\\d+$";
     private static final int MAX_RATE_LENGTH = 10;
 
