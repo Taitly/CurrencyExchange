@@ -94,14 +94,6 @@ public class ExchangeRateDao {
     }
 
     public ExchangeRate create(ExchangeRate exchangeRate) {
-        String baseCurrencyCode = exchangeRate.getBaseCurrency().getCode();
-        String targetCurrencyCode = exchangeRate.getTargetCurrency().getCode();
-        Optional<ExchangeRate> existingRate = findByPairCode(baseCurrencyCode, targetCurrencyCode);
-
-        if(existingRate.isPresent()) {
-            throw new DatabaseException("Exchange rate for a pair of codes %s/%s already exists.".formatted(baseCurrencyCode, targetCurrencyCode));
-        }
-
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_EXCHANGE_RATE, RETURN_GENERATED_KEYS)) {
 
@@ -117,7 +109,7 @@ public class ExchangeRateDao {
             }
             return exchangeRate;
         } catch (SQLException e) {
-            throw new DatabaseException("Failed to add exchange rate for a pair of codes %s/%s to the database.".formatted(baseCurrencyCode, targetCurrencyCode));
+            throw new DatabaseException("Failed to add exchange rate for a pair of codes %s/%s to the database.".formatted(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency()));
         }
     }
 

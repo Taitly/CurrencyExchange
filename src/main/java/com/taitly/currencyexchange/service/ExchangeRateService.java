@@ -5,6 +5,8 @@ import com.taitly.currencyexchange.dao.ExchangeRateDao;
 import com.taitly.currencyexchange.dto.ExchangeRateDto;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
+import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
+import com.taitly.currencyexchange.exception.DatabaseException;
 import com.taitly.currencyexchange.mapper.ExchangeRateMapper;
 
 import java.math.BigDecimal;
@@ -19,7 +21,7 @@ public class ExchangeRateService {
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
 
     public List<ExchangeRateDto> findAll() {
-     return exchangeRateDao.findAll().stream().map(exchangeRateMapper :: toDto).collect(Collectors.toList());
+     return exchangeRateDao.findAll().stream().map(exchangeRateMapper :: toDto).toList();
     }
 
     public ExchangeRateDto findByPairCode(String pairCode) {
@@ -34,9 +36,16 @@ public class ExchangeRateService {
 
     public ExchangeRateDto create(String baseCurrencyCode, String targetCurrencyCode, String rateValue) {
         Currency baseCurrency = currencyDao.findByCode(baseCurrencyCode)
-                .orElseThrow(() -> new RuntimeException("Base currency not found in database"));
+                .orElseThrow(() -> new RuntimeException("Currency with code %s not found in database".formatted(baseCurrencyCode)));
         Currency targetCurrency = currencyDao.findByCode(targetCurrencyCode)
-                .orElseThrow(() -> new RuntimeException("Base currency not found in database"));
+                .orElseThrow(() -> new RuntimeException("Currency with code %s not found in database".formatted(targetCurrencyCode)));
+
+        Optional<ExchangeRate> existingRate = exchangeRateDao.findByPairCode(baseCurrencyCode, targetCurrencyCode);
+
+        if(existingRate.isPresent()) {
+            throw new DataAlreadyExistsException("Exchange rate for a pair of codes %s/%s already exists.".formatted(baseCurrencyCode, targetCurrencyCode));
+        }
+
         BigDecimal rate = new BigDecimal(rateValue);
 
         ExchangeRate exchangeRate = new ExchangeRate(null, baseCurrency, targetCurrency, rate);
