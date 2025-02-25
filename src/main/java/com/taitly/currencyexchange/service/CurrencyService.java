@@ -3,6 +3,7 @@ package com.taitly.currencyexchange.service;
 import com.taitly.currencyexchange.dao.CurrencyDao;
 import com.taitly.currencyexchange.dto.CurrencyDto;
 import com.taitly.currencyexchange.entity.Currency;
+import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
 import com.taitly.currencyexchange.mapper.CurrencyMapper;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class CurrencyService {
     private final CurrencyMapper currencyMapper =  CurrencyMapper.getInstance();
 
     public List<CurrencyDto> findAll() {
-        return currencyDao.findAll().stream().map(currencyMapper :: toDto).collect(Collectors.toList());
+        return currencyDao.findAll().stream().map(currencyMapper :: toDto).toList();
     }
 
     public CurrencyDto findByCode(String code) {
@@ -27,6 +28,11 @@ public class CurrencyService {
     }
 
     public CurrencyDto create(CurrencyDto currencyDto) {
+        Optional<Currency> existingCurrency = currencyDao.findByCode(currencyDto.getCode());
+        if(existingCurrency.isPresent()) {
+            throw new DataAlreadyExistsException("Currency with code %s already exists in the database.".formatted(currencyDto.getCode()));
+        }
+
         Currency currency = currencyMapper.toEntity(currencyDto);
         Currency createdCurrency = currencyDao.create(currency);
 

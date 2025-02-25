@@ -68,12 +68,6 @@ public class CurrencyDao {
     }
 
     public Currency create(Currency currency) {
-        Optional<Currency> existingCurrency = findByCode(currency.getCode());
-
-        if (existingCurrency.isPresent()) {
-            throw new DatabaseException("Currency with code " + currency.getCode() + " already exists in the database.");
-        }
-
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CURRENCY, RETURN_GENERATED_KEYS)) {
 
