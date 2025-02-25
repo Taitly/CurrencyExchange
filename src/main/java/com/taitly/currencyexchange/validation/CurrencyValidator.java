@@ -30,7 +30,7 @@ public class CurrencyValidator {
         }
 
         if (!Pattern.matches(CODE_REGEX, code)) {
-            throw new InvalidDataException("Currency code must be exactly three uppercase letters.");
+            throw new InvalidDataException("Currency code must be a three-letter uppercase code in English (e.g., USD).");
         }
 
         checkCurrencyExist(code);
