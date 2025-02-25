@@ -63,7 +63,7 @@ public class CurrencyDao {
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {
-            throw new DatabaseException("Failed to read currency by code " + code + " from the database.");
+            throw new DatabaseException("Failed to read currency by code %s from the database.".formatted(code));
         }
     }
 
@@ -83,7 +83,7 @@ public class CurrencyDao {
             }
             return currency;
         } catch (SQLException e) {
-            throw new DatabaseException("Failed to add currency " + currency.getName() + " to the database");
+            throw new DatabaseException("Failed to add currency %s to the database".formatted(currency.getName()));
         }
     }
 

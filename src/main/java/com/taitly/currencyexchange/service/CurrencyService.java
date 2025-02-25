@@ -4,6 +4,7 @@ import com.taitly.currencyexchange.dao.CurrencyDao;
 import com.taitly.currencyexchange.dto.CurrencyDto;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
+import com.taitly.currencyexchange.exception.DataNotFoundException;
 import com.taitly.currencyexchange.mapper.CurrencyMapper;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class CurrencyService {
     }
 
     public CurrencyDto findByCode(String code) {
-        Optional<Currency> currencyOptional = currencyDao.findByCode(code);
-        Currency currency = currencyOptional.orElseThrow(() -> new NoSuchElementException("Currency not found"));
+        Currency currency = currencyDao.findByCode(code)
+                .orElseThrow(() -> new DataNotFoundException("Currency not found"));
 
         return currencyMapper.toDto(currency);
     }

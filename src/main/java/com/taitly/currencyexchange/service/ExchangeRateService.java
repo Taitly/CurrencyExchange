@@ -6,6 +6,7 @@ import com.taitly.currencyexchange.dto.ExchangeRateDto;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
 import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
+import com.taitly.currencyexchange.exception.DataNotFoundException;
 import com.taitly.currencyexchange.exception.DatabaseException;
 import com.taitly.currencyexchange.mapper.ExchangeRateMapper;
 
@@ -28,17 +29,17 @@ public class ExchangeRateService {
         String baseCurrencyCode = pairCode.substring(0, 3);
         String targetCurrencyCode = pairCode.substring(3, 6);
 
-        Optional<ExchangeRate> exchangeRateOptional = exchangeRateDao.findByPairCode(baseCurrencyCode, targetCurrencyCode);
-        ExchangeRate exchangeRate = exchangeRateOptional.orElseThrow(() -> new RuntimeException("ExchangeRate not found"));
+        ExchangeRate exchangeRate = exchangeRateDao.findByPairCode(baseCurrencyCode, targetCurrencyCode)
+                .orElseThrow(() -> new DataNotFoundException("No exchange rate was found for a pair of codes: %s .".formatted(pairCode)));
 
         return exchangeRateMapper.toDto(exchangeRate);
     }
 
     public ExchangeRateDto create(String baseCurrencyCode, String targetCurrencyCode, String rateValue) {
         Currency baseCurrency = currencyDao.findByCode(baseCurrencyCode)
-                .orElseThrow(() -> new RuntimeException("Currency with code %s not found in database".formatted(baseCurrencyCode)));
+                .orElseThrow(() -> new DataNotFoundException("Currency with code %s not found in database".formatted(baseCurrencyCode)));
         Currency targetCurrency = currencyDao.findByCode(targetCurrencyCode)
-                .orElseThrow(() -> new RuntimeException("Currency with code %s not found in database".formatted(targetCurrencyCode)));
+                .orElseThrow(() -> new DataNotFoundException("Currency with code %s not found in database".formatted(targetCurrencyCode)));
 
         Optional<ExchangeRate> existingRate = exchangeRateDao.findByPairCode(baseCurrencyCode, targetCurrencyCode);
 

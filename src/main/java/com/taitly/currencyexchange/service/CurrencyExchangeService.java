@@ -4,6 +4,7 @@ import com.taitly.currencyexchange.dao.ExchangeRateDao;
 import com.taitly.currencyexchange.dto.CurrencyExchangeDto;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
+import com.taitly.currencyexchange.exception.DataNotFoundException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +34,7 @@ public class CurrencyExchangeService {
                     .convertedAmount(convertedAmount)
                     .build();
         }
-        throw new RuntimeException("No exchange rate was found for the specified currency code pair");
+        throw new DataNotFoundException("No exchange rate was found for the specified currency code pair");
     }
 
     public Optional<ExchangeRate> getOptionalExchangeRate(String from, String to) {
