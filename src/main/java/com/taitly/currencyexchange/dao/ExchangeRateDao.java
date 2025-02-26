@@ -3,7 +3,7 @@ package com.taitly.currencyexchange.dao;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
 import com.taitly.currencyexchange.exception.DatabaseException;
-import com.taitly.currencyexchange.util.ConnectionManager;
+import com.taitly.currencyexchange.util.ConnectionPoolManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -61,8 +61,8 @@ public class ExchangeRateDao {
         """;
 
     public List<ExchangeRate> findAll() {
-        try (Connection connection = ConnectionManager.get();
-            PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)) {
+        try (Connection connection = ConnectionPoolManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             List<ExchangeRate> exchangeRates = new ArrayList<>();
@@ -76,7 +76,7 @@ public class ExchangeRateDao {
     }
 
     public Optional<ExchangeRate> findByPairCode(String baseCurrencyCode, String targetCurrencyCode) {
-        try (Connection connection = ConnectionManager.get();
+        try (Connection connection = ConnectionPoolManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_PAIR_CODE)){
 
             preparedStatement.setString(1, baseCurrencyCode);
@@ -94,7 +94,7 @@ public class ExchangeRateDao {
     }
 
     public ExchangeRate create(ExchangeRate exchangeRate) {
-        try (Connection connection = ConnectionManager.get();
+        try (Connection connection = ConnectionPoolManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_EXCHANGE_RATE, RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setLong(1, exchangeRate.getBaseCurrency().getId());
@@ -114,7 +114,7 @@ public class ExchangeRateDao {
     }
 
     public ExchangeRate update(ExchangeRate exchangeRate) {
-        try (Connection connection = ConnectionManager.get();
+        try (Connection connection = ConnectionPoolManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGE_RATE)){
 
             preparedStatement.setBigDecimal(1, exchangeRate.getRate());

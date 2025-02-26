@@ -2,7 +2,7 @@ package com.taitly.currencyexchange.dao;
 
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.exception.DatabaseException;
-import com.taitly.currencyexchange.util.ConnectionManager;
+import com.taitly.currencyexchange.util.ConnectionPoolManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class CurrencyDao {
             """;
 
     public List<Currency> findAll() {
-        try (Connection connection = ConnectionManager.get();
+        try (Connection connection = ConnectionPoolManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -51,7 +51,7 @@ public class CurrencyDao {
     }
 
     public Optional<Currency> findByCode(String code) {
-        try (Connection connection = ConnectionManager.get();
+        try (Connection connection = ConnectionPoolManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE)) {
 
             preparedStatement.setObject(1, code);
@@ -68,7 +68,7 @@ public class CurrencyDao {
     }
 
     public Currency create(Currency currency) {
-        try (Connection connection = ConnectionManager.get();
+        try (Connection connection = ConnectionPoolManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CURRENCY, RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, currency.getCode());
