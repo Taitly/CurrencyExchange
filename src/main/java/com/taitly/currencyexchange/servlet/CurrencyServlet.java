@@ -23,11 +23,11 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         String code = req.getPathInfo().substring(1);
+
         CurrencyDto currencyDto = currencyService.findByCode(code);
+
         resp.setStatus(HttpServletResponse.SC_OK);
-        String json = objectMapper.writeValueAsString(currencyDto);
-        printWriter.write(json);
+        objectMapper.writeValue(resp.getWriter(), currencyDto);
     }
 }

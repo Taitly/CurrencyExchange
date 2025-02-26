@@ -23,13 +23,13 @@ public class CurrenciesExchangeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         String fromCode = req.getParameter("from");
         String toCode = req.getParameter("to");
         String amount = req.getParameter("amount");
 
         CurrencyExchangeDto currencyExchangeDto = currencyExchangeService.exchange(fromCode, toCode, amount);
-        String json = objectMapper.writeValueAsString(currencyExchangeDto);
-        printWriter.write(json);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        objectMapper.writeValue(resp.getWriter(), currencyExchangeDto);
     }
 }

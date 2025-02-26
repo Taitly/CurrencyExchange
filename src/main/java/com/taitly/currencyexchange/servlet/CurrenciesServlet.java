@@ -27,16 +27,14 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         List<CurrencyDto> currencies = currencyService.findAll();
+
         resp.setStatus(HttpServletResponse.SC_OK);
-        String json = objectMapper.writeValueAsString(currencies);
-        printWriter.write(json);
+        objectMapper.writeValue(resp.getWriter(), currencies);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         String code = req.getParameter("code");
         String name = req.getParameter("name");
         String sign = req.getParameter("sign");
@@ -46,7 +44,6 @@ public class CurrenciesServlet extends HttpServlet {
         CurrencyDto currency = currencyService.create(currencyMapper.toDto(currencyToCreate));
 
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        String json = objectMapper.writeValueAsString(currency);
-        printWriter.write(json);
+        objectMapper.writeValue(resp.getWriter(), currency);
     }
 }

@@ -25,16 +25,14 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         List<ExchangeRateDto> exchangeRates = exchangeRateService.findAll();
+
         resp.setStatus(HttpServletResponse.SC_OK);
-        String json = objectMapper.writeValueAsString(exchangeRates);
-        printWriter.write(json);
+        objectMapper.writeValue(resp.getWriter(), exchangeRates);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         String baseCurrencyCode = req.getParameter("baseCurrencyCode");
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rate = req.getParameter("rate");
@@ -42,7 +40,6 @@ public class ExchangeRatesServlet extends HttpServlet {
         ExchangeRateDto exchangeRateDto = exchangeRateService.create(baseCurrencyCode, targetCurrencyCode, rate);
 
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        String json = objectMapper.writeValueAsString(exchangeRateDto);
-        printWriter.write(json);
+        objectMapper.writeValue(resp.getWriter(), exchangeRateDto);
     }
 }

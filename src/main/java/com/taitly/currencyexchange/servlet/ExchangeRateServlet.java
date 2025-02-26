@@ -23,26 +23,22 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         String pairCode = req.getPathInfo().substring(1);
 
         ExchangeRateDto exchangeRateDto = exchangeRateService.findByPairCode(pairCode);
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        String json = objectMapper.writeValueAsString(exchangeRateDto);
-        printWriter.write(json);
+        objectMapper.writeValue(resp.getWriter(), exchangeRateDto);
     }
 
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
         String pairCode = req.getPathInfo().substring(1);
         String rate = req.getParameter("rate");
 
         ExchangeRateDto exchangeRateDto = exchangeRateService.update(pairCode, rate);
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        String json = objectMapper.writeValueAsString(exchangeRateDto);
-        printWriter.write(json);
+        objectMapper.writeValue(resp.getWriter(), exchangeRateDto);
     }
 }
