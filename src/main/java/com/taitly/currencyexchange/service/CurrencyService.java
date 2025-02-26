@@ -37,11 +37,6 @@ public class CurrencyService {
         currencyValidator.checkName(currencyDto.getName());
         currencyValidator.checkSign(currencyDto.getSign());
 
-        Optional<Currency> existingCurrency = currencyDao.findByCode(currencyDto.getCode());
-        if(existingCurrency.isPresent()) {
-            throw new DataAlreadyExistsException("Currency with code %s already exists in the database.".formatted(currencyDto.getCode()));
-        }
-
         Currency currency = currencyMapper.toEntity(currencyDto);
         Currency createdCurrency = currencyDao.create(currency);
 

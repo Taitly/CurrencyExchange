@@ -51,12 +51,6 @@ public class ExchangeRateService {
         Currency targetCurrency = currencyDao.findByCode(targetCurrencyCode)
                 .orElseThrow(() -> new DataNotFoundException("Currency with code %s not found in database".formatted(targetCurrencyCode)));
 
-        Optional<ExchangeRate> existingRate = exchangeRateDao.findByPairCode(baseCurrencyCode, targetCurrencyCode);
-
-        if(existingRate.isPresent()) {
-            throw new DataAlreadyExistsException("Exchange rate for a pair of codes %s/%s already exists.".formatted(baseCurrencyCode, targetCurrencyCode));
-        }
-
         BigDecimal rate = new BigDecimal(rateValue);
 
         ExchangeRate exchangeRate = new ExchangeRate(null, baseCurrency, targetCurrency, rate);
