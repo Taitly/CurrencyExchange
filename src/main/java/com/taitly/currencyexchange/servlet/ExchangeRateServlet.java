@@ -24,50 +24,25 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter printWriter = resp.getWriter();
+        String pairCode = req.getPathInfo().substring(1);
 
-        try {
-            String pairCode = req.getPathInfo().substring(1);
-            ExchangeRateDto exchangeRateDto = exchangeRateService.findByPairCode(pairCode);
-            resp.setStatus(HttpServletResponse.SC_OK);
-            String json = objectMapper.writeValueAsString(exchangeRateDto);
-            printWriter.write(json);
-        } catch (InvalidDataException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), printWriter);
-        } catch (DataNotFoundException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage(), printWriter);
-        } catch (DatabaseException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), printWriter);
-        } finally {
-            printWriter.close();
-        }
+        ExchangeRateDto exchangeRateDto = exchangeRateService.findByPairCode(pairCode);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        String json = objectMapper.writeValueAsString(exchangeRateDto);
+        printWriter.write(json);
     }
 
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter printWriter = resp.getWriter();
+        String pairCode = req.getPathInfo().substring(1);
+        String rate = req.getParameter("rate");
 
-        try {
-            String pairCode = req.getPathInfo().substring(1);
-            String rate = req.getParameter("rate");
-            ExchangeRateDto exchangeRateDto = exchangeRateService.update(pairCode, rate);
-            resp.setStatus(HttpServletResponse.SC_OK);
-            String json = objectMapper.writeValueAsString(exchangeRateDto);
-            printWriter.write(json);
-        } catch (InvalidDataException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), printWriter);
-        } catch (DataNotFoundException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage(), printWriter);
-        } catch (DatabaseException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), printWriter);
-        } finally {
-            printWriter.close();
-        }
-    }
+        ExchangeRateDto exchangeRateDto = exchangeRateService.update(pairCode, rate);
 
-    private void writeErrorResponse(HttpServletResponse resp, int errorCode, String errorMessage, PrintWriter printWriter) throws IOException {
-        resp.setStatus(errorCode);
-        Map<String, String> errorResponse = Map.of("message", errorMessage);
-        String json = objectMapper.writeValueAsString(errorResponse);
+        resp.setStatus(HttpServletResponse.SC_OK);
+        String json = objectMapper.writeValueAsString(exchangeRateDto);
         printWriter.write(json);
     }
 }

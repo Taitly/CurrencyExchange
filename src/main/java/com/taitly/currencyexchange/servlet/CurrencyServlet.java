@@ -24,28 +24,10 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter printWriter = resp.getWriter();
-
-        try {
-            String code = req.getPathInfo().substring(1);
-            CurrencyDto currencyDto = currencyService.findByCode(code);
-            resp.setStatus(HttpServletResponse.SC_OK);
-            String json = objectMapper.writeValueAsString(currencyDto);
-            printWriter.write(json);
-        } catch (InvalidDataException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), printWriter);
-        } catch (DataNotFoundException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage(), printWriter);
-        } catch (DatabaseException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), printWriter);
-        } finally {
-            printWriter.close();
-        }
-    }
-
-    private void writeErrorResponse(HttpServletResponse resp, int errorCode, String errorMessage, PrintWriter printWriter) throws IOException {
-        resp.setStatus(errorCode);
-        Map<String, String> errorResponse = Map.of("message", errorMessage);
-        String json = objectMapper.writeValueAsString(errorResponse);
+        String code = req.getPathInfo().substring(1);
+        CurrencyDto currencyDto = currencyService.findByCode(code);
+        resp.setStatus(HttpServletResponse.SC_OK);
+        String json = objectMapper.writeValueAsString(currencyDto);
         printWriter.write(json);
     }
 }

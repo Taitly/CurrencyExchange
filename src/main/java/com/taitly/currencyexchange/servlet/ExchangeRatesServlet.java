@@ -26,50 +26,23 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter printWriter = resp.getWriter();
-
-        try {
-            List<ExchangeRateDto> exchangeRates = exchangeRateService.findAll();
-            resp.setStatus(HttpServletResponse.SC_OK);
-            String json = objectMapper.writeValueAsString(exchangeRates);
-            printWriter.write(json);
-        } catch (DatabaseException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), printWriter);
-        } finally {
-            printWriter.close();
-        }
-
+        List<ExchangeRateDto> exchangeRates = exchangeRateService.findAll();
+        resp.setStatus(HttpServletResponse.SC_OK);
+        String json = objectMapper.writeValueAsString(exchangeRates);
+        printWriter.write(json);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter printWriter = resp.getWriter();
+        String baseCurrencyCode = req.getParameter("baseCurrencyCode");
+        String targetCurrencyCode = req.getParameter("targetCurrencyCode");
+        String rate = req.getParameter("rate");
 
-        try {
-            String baseCurrencyCode = req.getParameter("baseCurrencyCode");
-            String targetCurrencyCode = req.getParameter("targetCurrencyCode");
-            String rate = req.getParameter("rate");
+        ExchangeRateDto exchangeRateDto = exchangeRateService.create(baseCurrencyCode, targetCurrencyCode, rate);
 
-            ExchangeRateDto exchangeRateDto = exchangeRateService.create(baseCurrencyCode, targetCurrencyCode, rate);
-            resp.setStatus(HttpServletResponse.SC_CREATED);
-            String json = objectMapper.writeValueAsString(exchangeRateDto);
-            printWriter.write(json);
-        } catch (InvalidDataException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), printWriter);
-        } catch (DataAlreadyExistsException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_CONFLICT, e.getMessage(), printWriter);
-        } catch (DataNotFoundException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage(), printWriter);
-        } catch (DatabaseException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), printWriter);
-        } finally {
-            printWriter.close();
-        }
-    }
-
-    private void writeErrorResponse(HttpServletResponse resp, int errorCode, String errorMessage, PrintWriter printWriter) throws IOException {
-        resp.setStatus(errorCode);
-        Map<String, String> errorResponse = Map.of("message", errorMessage);
-        String json = objectMapper.writeValueAsString(errorResponse);
+        resp.setStatus(HttpServletResponse.SC_CREATED);
+        String json = objectMapper.writeValueAsString(exchangeRateDto);
         printWriter.write(json);
     }
 }

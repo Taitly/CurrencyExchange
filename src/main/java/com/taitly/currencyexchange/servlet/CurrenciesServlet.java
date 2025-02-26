@@ -22,57 +22,31 @@ import java.util.Map;
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = CurrencyService.getInstance();
-
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final CurrencyMapper currencyMapper = CurrencyMapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
         PrintWriter printWriter = resp.getWriter();
-
-        try {
-            List<CurrencyDto> currencies = currencyService.findAll();
-            resp.setStatus(HttpServletResponse.SC_OK);
-            String json = objectMapper.writeValueAsString(currencies);
-            printWriter.write(json);
-        } catch (DatabaseException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), printWriter);
-        } finally {
-            printWriter.close();
-        }
+        List<CurrencyDto> currencies = currencyService.findAll();
+        resp.setStatus(HttpServletResponse.SC_OK);
+        String json = objectMapper.writeValueAsString(currencies);
+        printWriter.write(json);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter printWriter = resp.getWriter();
+        String code = req.getParameter("code");
+        String name = req.getParameter("name");
+        String sign = req.getParameter("sign");
 
-        try {
-            String code = req.getParameter("code");
-            String name = req.getParameter("name");
-            String sign = req.getParameter("sign");
-            Currency currencyToCreate = new Currency(null, code, name, sign);
+        Currency currencyToCreate = new Currency(null, code, name, sign);
 
-            CurrencyDto currency = currencyService.create(currencyMapper.toDto(currencyToCreate));
-            resp.setStatus(HttpServletResponse.SC_CREATED);
-            String json = objectMapper.writeValueAsString(currency);
-            printWriter.write(json);
-        } catch (InvalidDataException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), printWriter);
-        } catch (DataAlreadyExistsException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_CONFLICT, e.getMessage(), printWriter);
-        } catch (DatabaseException e) {
-            writeErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), printWriter);
-        } finally {
-            printWriter.close();
-        }
-    }
+        CurrencyDto currency = currencyService.create(currencyMapper.toDto(currencyToCreate));
 
-    private void writeErrorResponse(HttpServletResponse resp, int errorCode, String errorMessage, PrintWriter printWriter) throws IOException {
-        resp.setStatus(errorCode);
-        Map<String, String> errorResponse = Map.of("message", errorMessage);
-        String json = objectMapper.writeValueAsString(errorResponse);
+        resp.setStatus(HttpServletResponse.SC_CREATED);
+        String json = objectMapper.writeValueAsString(currency);
         printWriter.write(json);
     }
 }
