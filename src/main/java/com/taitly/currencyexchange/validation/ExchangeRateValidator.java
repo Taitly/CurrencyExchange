@@ -12,13 +12,12 @@ public class ExchangeRateValidator {
     private static final int MAX_RATE_LENGTH = 10;
 
 
-    public void checkPairCode(String pairCode) {
+    public void checkPairCode(String baseCode, String targetCode) {
+        String pairCode = baseCode + targetCode;
         if (!Pattern.matches(PAIR_CODE_REGEX, pairCode)) {
             throw new InvalidDataException("Invalid currency pair code. It should be in the format XXXYYY, where XXX and YYY are three-letter currency codes (e.g., USDEUR).");
         }
 
-        String baseCode = pairCode.substring(0, 3);
-        String targetCode = pairCode.substring(3, 6);
         if (baseCode.equals(targetCode)) {
             throw new InvalidDataException("Codes in pair cannot be equal.");
         }

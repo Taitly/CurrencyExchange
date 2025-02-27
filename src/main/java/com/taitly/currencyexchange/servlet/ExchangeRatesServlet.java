@@ -1,11 +1,8 @@
 package com.taitly.currencyexchange.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taitly.currencyexchange.dto.ExchangeRateDto;
-import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
-import com.taitly.currencyexchange.exception.DataNotFoundException;
-import com.taitly.currencyexchange.exception.DatabaseException;
-import com.taitly.currencyexchange.exception.InvalidDataException;
+import com.taitly.currencyexchange.dto.ExchangeRateRequestDto;
+import com.taitly.currencyexchange.dto.ExchangeRateResponseDto;
 import com.taitly.currencyexchange.service.ExchangeRateService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,9 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet("/exchangeRates")
 public class ExchangeRatesServlet extends HttpServlet {
@@ -25,7 +21,7 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<ExchangeRateDto> exchangeRates = exchangeRateService.findAll();
+        List<ExchangeRateResponseDto> exchangeRates = exchangeRateService.findAll();
 
         resp.setStatus(HttpServletResponse.SC_OK);
         objectMapper.writeValue(resp.getWriter(), exchangeRates);
@@ -37,9 +33,13 @@ public class ExchangeRatesServlet extends HttpServlet {
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rate = req.getParameter("rate");
 
-        ExchangeRateDto exchangeRateDto = exchangeRateService.create(baseCurrencyCode, targetCurrencyCode, rate);
+        BigDecimal rateValue = new BigDecimal(rate);
+
+        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rateValue);
+
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.create(exchangeRateRequestDto);
 
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        objectMapper.writeValue(resp.getWriter(), exchangeRateDto);
+        objectMapper.writeValue(resp.getWriter(), exchangeRateResponseDto);
     }
 }

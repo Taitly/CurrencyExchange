@@ -1,10 +1,8 @@
 package com.taitly.currencyexchange.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taitly.currencyexchange.dto.ExchangeRateDto;
-import com.taitly.currencyexchange.exception.DataNotFoundException;
-import com.taitly.currencyexchange.exception.DatabaseException;
-import com.taitly.currencyexchange.exception.InvalidDataException;
+import com.taitly.currencyexchange.dto.ExchangeRateRequestDto;
+import com.taitly.currencyexchange.dto.ExchangeRateResponseDto;
 import com.taitly.currencyexchange.service.ExchangeRateService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,8 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
+import java.math.BigDecimal;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
@@ -24,11 +21,14 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pairCode = req.getPathInfo().substring(1);
+        String baseCurrencyCode = pairCode.substring(0, 3);
+        String targetCurrencyCode = pairCode.substring(3, 6);
 
-        ExchangeRateDto exchangeRateDto = exchangeRateService.findByPairCode(pairCode);
+        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, null);
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByPairCode(exchangeRateRequestDto);
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(resp.getWriter(), exchangeRateDto);
+        objectMapper.writeValue(resp.getWriter(), exchangeRateResponseDto);
     }
 
     @Override
@@ -36,9 +36,14 @@ public class ExchangeRateServlet extends HttpServlet {
         String pairCode = req.getPathInfo().substring(1);
         String rate = req.getParameter("rate");
 
-        ExchangeRateDto exchangeRateDto = exchangeRateService.update(pairCode, rate);
+        String baseCurrencyCode = pairCode.substring(0, 3);
+        String targetCurrencyCode = pairCode.substring(3, 6);
+        BigDecimal rateValue = new BigDecimal(rate);
+
+        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rateValue);
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.update(exchangeRateRequestDto);
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(resp.getWriter(), exchangeRateDto);
+        objectMapper.writeValue(resp.getWriter(), exchangeRateResponseDto);
     }
 }

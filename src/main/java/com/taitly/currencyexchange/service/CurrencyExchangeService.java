@@ -23,7 +23,7 @@ public class CurrencyExchangeService {
     public CurrencyExchangeDto exchange(String from, String to, String amount) {
         currencyValidator.checkCode(from);
         currencyValidator.checkCode(to);
-        exchangeRateValidator.checkPairCode(from + to);
+        exchangeRateValidator.checkPairCode(from, to);
         exchangeRateValidator.checkAmount(amount);
 
         Optional<ExchangeRate> optionalExchangeRate = getOptionalExchangeRate(from, to);
