@@ -1,17 +1,14 @@
 package com.taitly.currencyexchange.service;
 
 import com.taitly.currencyexchange.dao.CurrencyDao;
-import com.taitly.currencyexchange.dto.CurrencyDto;
+import com.taitly.currencyexchange.dto.CurrencyRequestDto;
+import com.taitly.currencyexchange.dto.CurrencyResponseDto;
 import com.taitly.currencyexchange.entity.Currency;
-import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
 import com.taitly.currencyexchange.exception.DataNotFoundException;
 import com.taitly.currencyexchange.mapper.CurrencyMapper;
 import com.taitly.currencyexchange.validation.CurrencyValidator;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();
@@ -19,25 +16,25 @@ public class CurrencyService {
     private final CurrencyMapper currencyMapper =  CurrencyMapper.getInstance();
     private final CurrencyValidator currencyValidator = new CurrencyValidator();
 
-    public List<CurrencyDto> findAll() {
+    public List<CurrencyResponseDto> findAll() {
         return currencyDao.findAll().stream().map(currencyMapper :: toDto).toList();
     }
 
-    public CurrencyDto findByCode(String code) {
-        currencyValidator.checkCode(code);
+    public CurrencyResponseDto findByCode(CurrencyRequestDto currencyRequestDto) {
+        currencyValidator.checkCode(currencyRequestDto.getCode());
 
-        Currency currency = currencyDao.findByCode(code)
+        Currency currency = currencyDao.findByCode(currencyRequestDto.getCode())
                 .orElseThrow(() -> new DataNotFoundException("Currency not found in the database."));
 
         return currencyMapper.toDto(currency);
     }
 
-    public CurrencyDto create(CurrencyDto currencyDto) {
-        currencyValidator.checkCode(currencyDto.getCode());
-        currencyValidator.checkName(currencyDto.getName());
-        currencyValidator.checkSign(currencyDto.getSign());
+    public CurrencyResponseDto create(CurrencyRequestDto currencyRequestDto) {
+        currencyValidator.checkCode(currencyRequestDto.getCode());
+        currencyValidator.checkName(currencyRequestDto.getName());
+        currencyValidator.checkSign(currencyRequestDto.getSign());
 
-        Currency currency = currencyMapper.toEntity(currencyDto);
+        Currency currency = currencyMapper.toEntity(currencyRequestDto);
         Currency createdCurrency = currencyDao.create(currency);
 
         return currencyMapper.toDto(createdCurrency);
