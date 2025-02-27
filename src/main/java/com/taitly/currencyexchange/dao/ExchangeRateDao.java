@@ -109,7 +109,7 @@ public class ExchangeRateDao {
             }
             return exchangeRate;
         } catch (SQLException e) {
-            throw new DatabaseException("Failed to add exchange rate for a pair of codes %s/%s to the database.".formatted(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency()));
+            throw new DatabaseException("Failed to add exchange rate for a pair of codes %s/%s to the database.".formatted(exchangeRate.getBaseCurrency().getCode(), exchangeRate.getTargetCurrency().getCode()));
         }
     }
 
