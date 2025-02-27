@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class CurrencyDto {
+public class CurrencyResponseDto {
     Long id;
     String code;
     String name;
