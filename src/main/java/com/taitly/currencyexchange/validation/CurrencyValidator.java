@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class CurrencyValidator {
     private static final String NAME_REGEX = "^[a-zA-Z]+(\\s+[a-zA-Z]+)*$";
     private static final String CODE_REGEX = "^[A-Z]{3}$";
-    private static final String CURRENCY_SIGN_REGEX = "^[\\p{L}\\p{S}]{1,5}$";
+    private static final String CURRENCY_SIGN_REGEX = "^[\\p{L}\\p{P}]{1,5}$";
 
     public void checkName(String name) {
         if (name == null || name.isEmpty()) {
