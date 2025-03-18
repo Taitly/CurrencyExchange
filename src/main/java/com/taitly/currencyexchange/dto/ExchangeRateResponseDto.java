@@ -6,11 +6,9 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 
-@Value
-@Builder
-public class ExchangeRateResponseDto {
-    Long id;
-    Currency BaseCurrency;
-    Currency TargetCurrency;
-    BigDecimal rate;
-}
+public record ExchangeRateResponseDto(
+        Long id,
+        CurrencyResponseDto baseCurrency,
+        CurrencyResponseDto targetCurrency,
+        BigDecimal rate
+) {}

@@ -6,12 +6,10 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 
-@Value
-@Builder
-public class CurrencyExchangeDto {
-    Currency baseCurrency;
-    Currency targetCurrency;
-    BigDecimal rate;
-    BigDecimal amount;
-    BigDecimal convertedAmount;
-}
+public record CurrencyExchangeDto (
+    Currency baseCurrency,
+    Currency targetCurrency,
+    BigDecimal rate,
+    BigDecimal amount,
+    BigDecimal convertedAmount
+) {}
