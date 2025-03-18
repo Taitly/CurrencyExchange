@@ -18,16 +18,17 @@ import java.math.BigDecimal;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
-    ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
-    ObjectMapper objectMapper = new ObjectMapper();
     private final ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pairCode = req.getPathInfo().substring(1);
         String baseCurrencyCode = pairCode.substring(0, 3);
         String targetCurrencyCode = pairCode.substring(3, 6);
+
+        exchangeRateValidator.checkPairCode(baseCurrencyCode, targetCurrencyCode);
 
         ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, null);
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByPairCode(exchangeRateRequestDto);
@@ -43,6 +44,9 @@ public class ExchangeRateServlet extends HttpServlet {
         String rate = parseRateFromRequest(requestBody);
         String baseCurrencyCode = pairCode.substring(0, 3);
         String targetCurrencyCode = pairCode.substring(3, 6);
+
+        exchangeRateValidator.checkRate(rate);
+        exchangeRateValidator.checkPairCode(baseCurrencyCode, targetCurrencyCode);
 
         BigDecimal rateValue = new BigDecimal(rate);
 

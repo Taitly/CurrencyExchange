@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taitly.currencyexchange.dto.ExchangeRateRequestDto;
 import com.taitly.currencyexchange.dto.ExchangeRateResponseDto;
 import com.taitly.currencyexchange.service.ExchangeRateService;
+import com.taitly.currencyexchange.validation.CurrencyValidator;
+import com.taitly.currencyexchange.validation.ExchangeRateValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +20,8 @@ import java.util.List;
 public class ExchangeRatesServlet extends HttpServlet {
     private final ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final CurrencyValidator currencyValidator = new CurrencyValidator();
+    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,6 +36,10 @@ public class ExchangeRatesServlet extends HttpServlet {
         String baseCurrencyCode = req.getParameter("baseCurrencyCode");
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rate = req.getParameter("rate");
+
+        currencyValidator.checkCode(baseCurrencyCode);
+        currencyValidator.checkCode(targetCurrencyCode);
+        exchangeRateValidator.checkRate(rate);
 
         BigDecimal rateValue = new BigDecimal(rate);
 

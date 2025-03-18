@@ -17,20 +17,16 @@ import java.util.List;
 public class ExchangeRateService {
     private static final ExchangeRateService INSTANCE = new ExchangeRateService();
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
-    private final ExchangeRateMapper exchangeRateMapper = ExchangeRateMapper.getInstance();
+    private final ExchangeRateMapper exchangeRateMapper = ExchangeRateMapper.INSTANCE;
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
-    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
-    private final CurrencyValidator currencyValidator = new CurrencyValidator();
 
     public List<ExchangeRateResponseDto> findAll() {
      return exchangeRateDao.findAll().stream().map(exchangeRateMapper :: toDto).toList();
     }
 
     public ExchangeRateResponseDto findByPairCode(ExchangeRateRequestDto exchangeRateRequestDto) {
-        exchangeRateValidator.checkPairCode(exchangeRateRequestDto.getBaseCurrencyCode(), exchangeRateRequestDto.getTargetCurrencyCode());
-
-        String baseCurrencyCode = exchangeRateRequestDto.getBaseCurrencyCode();
-        String targetCurrencyCode = exchangeRateRequestDto.getTargetCurrencyCode();
+        String baseCurrencyCode = exchangeRateRequestDto.baseCurrencyCode();
+        String targetCurrencyCode = exchangeRateRequestDto.targetCurrencyCode();
 
         ExchangeRate exchangeRate = exchangeRateDao.findByPairCode(baseCurrencyCode, targetCurrencyCode)
                 .orElseThrow(() -> new DataNotFoundException("No exchange rate was found for a pair of codes: %s/%s .".formatted(baseCurrencyCode, targetCurrencyCode)));
@@ -39,13 +35,9 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateResponseDto create(ExchangeRateRequestDto exchangeRateRequestDto) {
-        currencyValidator.checkCode(exchangeRateRequestDto.getBaseCurrencyCode());
-        currencyValidator.checkCode(exchangeRateRequestDto.getTargetCurrencyCode());
-        exchangeRateValidator.checkRate(exchangeRateRequestDto.getRate().toString());
-
-        String baseCurrencyCode = exchangeRateRequestDto.getBaseCurrencyCode();
-        String targetCurrencyCode = exchangeRateRequestDto.getTargetCurrencyCode();
-        BigDecimal rate = exchangeRateRequestDto.getRate();
+        String baseCurrencyCode = exchangeRateRequestDto.baseCurrencyCode();
+        String targetCurrencyCode = exchangeRateRequestDto.targetCurrencyCode();
+        BigDecimal rate = exchangeRateRequestDto.rate();
 
 
         Currency baseCurrency = currencyDao.findByCode(baseCurrencyCode)
@@ -61,12 +53,9 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateResponseDto update(ExchangeRateRequestDto exchangeRateRequestDto) {
-        exchangeRateValidator.checkPairCode(exchangeRateRequestDto.getBaseCurrencyCode(), exchangeRateRequestDto.getTargetCurrencyCode());
-        exchangeRateValidator.checkRate(exchangeRateRequestDto.getRate().toString());
-
-        String baseCurrencyCode = exchangeRateRequestDto.getBaseCurrencyCode();
-        String targetCurrencyCode = exchangeRateRequestDto.getTargetCurrencyCode();
-        BigDecimal rate = exchangeRateRequestDto.getRate();
+        String baseCurrencyCode = exchangeRateRequestDto.baseCurrencyCode();
+        String targetCurrencyCode = exchangeRateRequestDto.targetCurrencyCode();
+        BigDecimal rate = exchangeRateRequestDto.rate();
 
         ExchangeRate exchangeRate = exchangeRateDao.findByPairCode(baseCurrencyCode, targetCurrencyCode)
                 .orElseThrow(() -> new DataNotFoundException("No exchange rate was found for a pair of codes: %s/%s .".formatted(baseCurrencyCode, targetCurrencyCode)));

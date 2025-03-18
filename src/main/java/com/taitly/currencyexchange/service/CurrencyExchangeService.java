@@ -16,16 +16,8 @@ public class CurrencyExchangeService {
     private static final CurrencyExchangeService INSTANCE = new CurrencyExchangeService();
     private static final String BASE_CROSS_CURRENCY_CODE = "USD";
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
-    private final CurrencyValidator currencyValidator = new CurrencyValidator();
-    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
-
 
     public CurrencyExchangeDto exchange(String from, String to, String amount) {
-        currencyValidator.checkCode(from);
-        currencyValidator.checkCode(to);
-        exchangeRateValidator.checkPairCode(from, to);
-        exchangeRateValidator.checkAmount(amount);
-
         Optional<ExchangeRate> optionalExchangeRate = getOptionalExchangeRate(from, to);
 
         if (optionalExchangeRate.isPresent()) {

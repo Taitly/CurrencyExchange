@@ -3,8 +3,8 @@ package com.taitly.currencyexchange.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taitly.currencyexchange.dto.CurrencyRequestDto;
 import com.taitly.currencyexchange.dto.CurrencyResponseDto;
-import com.taitly.currencyexchange.mapper.CurrencyMapper;
 import com.taitly.currencyexchange.service.CurrencyService;
+import com.taitly.currencyexchange.validation.CurrencyValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,7 +18,7 @@ import java.util.List;
 public class CurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = CurrencyService.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final CurrencyMapper currencyMapper = CurrencyMapper.getInstance();
+    private final CurrencyValidator currencyValidator = new CurrencyValidator();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,6 +33,10 @@ public class CurrenciesServlet extends HttpServlet {
         String code = req.getParameter("code");
         String name = req.getParameter("name");
         String sign = req.getParameter("sign");
+
+        currencyValidator.checkCode(code);
+        currencyValidator.checkName(name);
+        currencyValidator.checkSign(sign);
 
         CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, name, sign);
         CurrencyResponseDto currencyResponseDto = currencyService.create(currencyRequestDto);
