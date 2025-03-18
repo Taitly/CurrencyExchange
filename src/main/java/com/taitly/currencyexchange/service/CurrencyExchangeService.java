@@ -35,13 +35,7 @@ public class CurrencyExchangeService {
             BigDecimal amountToConvert = new BigDecimal(amount);
             BigDecimal convertedAmount = amountToConvert.multiply(rate).setScale(2, RoundingMode.HALF_UP);
 
-            return CurrencyExchangeDto.builder()
-                    .baseCurrency(fromCurrency)
-                    .targetCurrency(toCurrency)
-                    .rate(rate)
-                    .amount(amountToConvert)
-                    .convertedAmount(convertedAmount)
-                    .build();
+            return new CurrencyExchangeDto(fromCurrency, toCurrency, rate, amountToConvert, convertedAmount);
         }
         throw new DataNotFoundException("No exchange rate was found for the specified currency code pair");
     }
