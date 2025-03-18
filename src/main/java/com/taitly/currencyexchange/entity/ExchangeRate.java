@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ExchangeRate {
     private Long id;
-    private Currency BaseCurrency;
-    private Currency TargetCurrency;
+    private Currency baseCurrency;
+    private Currency targetCurrency;
     private BigDecimal rate;
 }
