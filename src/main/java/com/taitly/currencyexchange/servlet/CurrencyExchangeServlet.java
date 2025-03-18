@@ -15,6 +15,8 @@ import java.io.IOException;
 public class CurrencyExchangeServlet extends HttpServlet {
     CurrencyExchangeService currencyExchangeService = CurrencyExchangeService.getInstance();
     ObjectMapper objectMapper = new ObjectMapper();
+    private final CurrencyExchangeService currencyExchangeService = CurrencyExchangeService.getInstance();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

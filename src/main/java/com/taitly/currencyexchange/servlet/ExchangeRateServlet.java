@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 public class ExchangeRateServlet extends HttpServlet {
     ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
     ObjectMapper objectMapper = new ObjectMapper();
+    private final ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
