@@ -1,5 +1,8 @@
 package com.taitly.currencyexchange.service;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.taitly.currencyexchange.dao.CurrencyDao;
 import com.taitly.currencyexchange.dao.ExchangeRateDao;
 import com.taitly.currencyexchange.dto.ExchangeRateRequestDto;
@@ -8,11 +11,6 @@ import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
 import com.taitly.currencyexchange.exception.DataNotFoundException;
 import com.taitly.currencyexchange.mapper.ExchangeRateMapper;
-import com.taitly.currencyexchange.validation.CurrencyValidator;
-import com.taitly.currencyexchange.validation.ExchangeRateValidator;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public class ExchangeRateService {
     private static final ExchangeRateService INSTANCE = new ExchangeRateService();

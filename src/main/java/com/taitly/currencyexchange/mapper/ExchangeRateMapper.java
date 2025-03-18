@@ -1,9 +1,10 @@
 package com.taitly.currencyexchange.mapper;
 
-import com.taitly.currencyexchange.dto.ExchangeRateResponseDto;
-import com.taitly.currencyexchange.entity.ExchangeRate;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import com.taitly.currencyexchange.dto.ExchangeRateResponseDto;
+import com.taitly.currencyexchange.entity.ExchangeRate;
 
 @Mapper(uses = CurrencyMapper.class)
 public interface ExchangeRateMapper {

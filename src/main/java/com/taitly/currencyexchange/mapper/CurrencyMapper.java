@@ -1,10 +1,11 @@
 package com.taitly.currencyexchange.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+
 import com.taitly.currencyexchange.dto.CurrencyRequestDto;
 import com.taitly.currencyexchange.dto.CurrencyResponseDto;
 import com.taitly.currencyexchange.entity.Currency;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface CurrencyMapper {

@@ -1,10 +1,8 @@
 package com.taitly.currencyexchange.dto;
 
-import com.taitly.currencyexchange.entity.Currency;
-import lombok.Builder;
-import lombok.Value;
-
 import java.math.BigDecimal;
+
+import com.taitly.currencyexchange.entity.Currency;
 
 public record CurrencyExchangeDto (
     Currency baseCurrency,

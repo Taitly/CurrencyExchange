@@ -1,14 +1,13 @@
 package com.taitly.currencyexchange.service;
 
+import java.util.List;
+
 import com.taitly.currencyexchange.dao.CurrencyDao;
 import com.taitly.currencyexchange.dto.CurrencyRequestDto;
 import com.taitly.currencyexchange.dto.CurrencyResponseDto;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.exception.DataNotFoundException;
 import com.taitly.currencyexchange.mapper.CurrencyMapper;
-import com.taitly.currencyexchange.validation.CurrencyValidator;
-
-import java.util.List;
 
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();

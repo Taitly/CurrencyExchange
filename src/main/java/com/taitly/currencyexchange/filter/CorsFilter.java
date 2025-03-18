@@ -13,7 +13,6 @@ import java.io.IOException;
         "/currencies", "/currency/*", "/exchangeRates", "/exchangeRate/*", "/exchange"
 })
 public class CorsFilter extends HttpFilter {
-
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         res.setHeader("Access-Control-Allow-Origin", "*");
