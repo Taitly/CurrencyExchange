@@ -1,64 +1,67 @@
 package com.taitly.currencyexchange.dao;
 
-import java.sql.*;
+import com.taitly.currencyexchange.entity.Currency;
+import com.taitly.currencyexchange.entity.ExchangeRate;
+import com.taitly.currencyexchange.exception.DatabaseException;
+import com.taitly.currencyexchange.util.ConnectionPoolManager;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
-import com.taitly.currencyexchange.entity.Currency;
-import com.taitly.currencyexchange.entity.ExchangeRate;
-import com.taitly.currencyexchange.exception.DatabaseException;
-import com.taitly.currencyexchange.util.ConnectionPoolManager;
-
 public class ExchangeRateDao {
     private static final ExchangeRateDao INSTANCE = new ExchangeRateDao();
 
     private static final String FIND_ALL = """
-        SELECT  ExchangeRates.id,
-                ExchangeRates.BaseCurrencyId,
-                BaseCurrency.code AS BaseCurrencyCode,
-                BaseCurrency.FullName AS BaseCurrencyFullName,
-                BaseCurrency.Sign AS BaseCurrencySign,
-                ExchangeRates.TargetCurrencyId,
-                TargetCurrency.code AS TargetCurrencyCode,
-                TargetCurrency.FullName AS TargetCurrencyFullName,
-                TargetCurrency.Sign AS TargetCurrencySign,
-                ExchangeRates.Rate
-          FROM  ExchangeRates
-          JOIN  main.Currencies BaseCurrency ON ExchangeRates.BaseCurrencyId = BaseCurrency.ID
-          JOIN  main.Currencies TargetCurrency ON ExchangeRates.TargetCurrencyId = TargetCurrency.ID
-        """;
+            SELECT  ExchangeRates.id,
+                    ExchangeRates.BaseCurrencyId,
+                    BaseCurrency.code AS BaseCurrencyCode,
+                    BaseCurrency.FullName AS BaseCurrencyFullName,
+                    BaseCurrency.Sign AS BaseCurrencySign,
+                    ExchangeRates.TargetCurrencyId,
+                    TargetCurrency.code AS TargetCurrencyCode,
+                    TargetCurrency.FullName AS TargetCurrencyFullName,
+                    TargetCurrency.Sign AS TargetCurrencySign,
+                    ExchangeRates.Rate
+              FROM  ExchangeRates
+              JOIN  main.Currencies BaseCurrency ON ExchangeRates.BaseCurrencyId = BaseCurrency.ID
+              JOIN  main.Currencies TargetCurrency ON ExchangeRates.TargetCurrencyId = TargetCurrency.ID
+            """;
 
     private static final String FIND_BY_PAIR_CODE = """
-        SELECT  ExchangeRates.id,
-                ExchangeRates.BaseCurrencyId,
-                BaseCurrency.code AS BaseCurrencyCode,
-                BaseCurrency.FullName AS BaseCurrencyFullName,
-                BaseCurrency.Sign AS BaseCurrencySign,
-                ExchangeRates.TargetCurrencyId,
-                TargetCurrency.code AS TargetCurrencyCode,
-                TargetCurrency.FullName AS TargetCurrencyFullName,
-                TargetCurrency.Sign AS TargetCurrencySign,
-                ExchangeRates.Rate
-          FROM  ExchangeRates
-          JOIN  main.Currencies BaseCurrency ON ExchangeRates.BaseCurrencyId = BaseCurrency.ID
-          JOIN  main.Currencies TargetCurrency ON ExchangeRates.TargetCurrencyId = TargetCurrency.ID
-         WHERE  BaseCurrencyCode = ? and TargetCurrencyCode = ?
-        """;
+            SELECT  ExchangeRates.id,
+                    ExchangeRates.BaseCurrencyId,
+                    BaseCurrency.code AS BaseCurrencyCode,
+                    BaseCurrency.FullName AS BaseCurrencyFullName,
+                    BaseCurrency.Sign AS BaseCurrencySign,
+                    ExchangeRates.TargetCurrencyId,
+                    TargetCurrency.code AS TargetCurrencyCode,
+                    TargetCurrency.FullName AS TargetCurrencyFullName,
+                    TargetCurrency.Sign AS TargetCurrencySign,
+                    ExchangeRates.Rate
+              FROM  ExchangeRates
+              JOIN  main.Currencies BaseCurrency ON ExchangeRates.BaseCurrencyId = BaseCurrency.ID
+              JOIN  main.Currencies TargetCurrency ON ExchangeRates.TargetCurrencyId = TargetCurrency.ID
+             WHERE  BaseCurrencyCode = ? and TargetCurrencyCode = ?
+            """;
 
     private static final String SAVE_EXCHANGE_RATE = """
-        INSERT INTO  ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate)
-             VALUES  (?, ?, ?)
-        """;
+            INSERT INTO  ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate)
+                 VALUES  (?, ?, ?)
+            """;
 
     private static final String UPDATE_EXCHANGE_RATE = """
-        UPDATE  ExchangeRates
-           SET  Rate = ?
-         WHERE  BaseCurrencyId = (SELECT ID FROM Currencies WHERE Code = ?)
-           AND  TargetCurrencyId = (SELECT ID FROM Currencies WHERE Code = ?)
-        """;
+            UPDATE  ExchangeRates
+               SET  Rate = ?
+             WHERE  BaseCurrencyId = (SELECT ID FROM Currencies WHERE Code = ?)
+               AND  TargetCurrencyId = (SELECT ID FROM Currencies WHERE Code = ?)
+            """;
 
     public List<ExchangeRate> findAll() {
         try (Connection connection = ConnectionPoolManager.get();
@@ -77,7 +80,7 @@ public class ExchangeRateDao {
 
     public Optional<ExchangeRate> findByPairCode(String baseCurrencyCode, String targetCurrencyCode) {
         try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_PAIR_CODE)){
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_PAIR_CODE)) {
 
             preparedStatement.setString(1, baseCurrencyCode);
             preparedStatement.setString(2, targetCurrencyCode);
@@ -115,7 +118,7 @@ public class ExchangeRateDao {
 
     public ExchangeRate update(ExchangeRate exchangeRate) {
         try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGE_RATE)){
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGE_RATE)) {
 
             preparedStatement.setBigDecimal(1, exchangeRate.getRate());
             preparedStatement.setString(2, exchangeRate.getBaseCurrency().getCode());

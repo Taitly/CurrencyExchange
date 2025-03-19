@@ -1,5 +1,10 @@
 package com.taitly.currencyexchange.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
+import com.taitly.currencyexchange.exception.DataNotFoundException;
+import com.taitly.currencyexchange.exception.DatabaseException;
+import com.taitly.currencyexchange.exception.InvalidDataException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -10,14 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static jakarta.servlet.http.HttpServletResponse.*;
-
-import com.taitly.currencyexchange.exception.DataAlreadyExistsException;
-import com.taitly.currencyexchange.exception.DataNotFoundException;
-import com.taitly.currencyexchange.exception.DatabaseException;
-import com.taitly.currencyexchange.exception.InvalidDataException;
 
 @WebFilter(value = {
         "/currencies", "/currency/*", "/exchangeRates", "/exchangeRate/*", "/exchange"

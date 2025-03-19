@@ -1,5 +1,10 @@
 package com.taitly.currencyexchange.servlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taitly.currencyexchange.dto.CurrencyRequestDto;
+import com.taitly.currencyexchange.dto.CurrencyResponseDto;
+import com.taitly.currencyexchange.service.CurrencyService;
+import com.taitly.currencyexchange.validation.CurrencyValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -7,13 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.taitly.currencyexchange.dto.CurrencyRequestDto;
-import com.taitly.currencyexchange.dto.CurrencyResponseDto;
-import com.taitly.currencyexchange.service.CurrencyService;
-import com.taitly.currencyexchange.validation.CurrencyValidator;
 
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {

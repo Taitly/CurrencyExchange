@@ -1,8 +1,5 @@
 package com.taitly.currencyexchange.service;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.taitly.currencyexchange.dao.CurrencyDao;
 import com.taitly.currencyexchange.dao.ExchangeRateDao;
 import com.taitly.currencyexchange.dto.ExchangeRateRequestDto;
@@ -12,6 +9,9 @@ import com.taitly.currencyexchange.entity.ExchangeRate;
 import com.taitly.currencyexchange.exception.DataNotFoundException;
 import com.taitly.currencyexchange.mapper.ExchangeRateMapper;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public class ExchangeRateService {
     private static final ExchangeRateService INSTANCE = new ExchangeRateService();
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
@@ -19,7 +19,7 @@ public class ExchangeRateService {
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
 
     public List<ExchangeRateResponseDto> findAll() {
-     return exchangeRateDao.findAll().stream().map(exchangeRateMapper :: toDto).toList();
+        return exchangeRateDao.findAll().stream().map(exchangeRateMapper::toDto).toList();
     }
 
     public ExchangeRateResponseDto findByPairCode(ExchangeRateRequestDto exchangeRateRequestDto) {

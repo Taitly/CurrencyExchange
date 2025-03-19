@@ -1,12 +1,11 @@
 package com.taitly.currencyexchange.util;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
+import com.taitly.currencyexchange.exception.DatabaseException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import com.taitly.currencyexchange.exception.DatabaseException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class ConnectionPoolManager {
     private static final HikariDataSource dataSource;

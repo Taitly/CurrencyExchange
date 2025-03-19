@@ -1,15 +1,18 @@
 package com.taitly.currencyexchange.dao;
 
-import java.sql.*;
+import com.taitly.currencyexchange.entity.Currency;
+import com.taitly.currencyexchange.exception.DatabaseException;
+import com.taitly.currencyexchange.util.ConnectionPoolManager;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
-
-import com.taitly.currencyexchange.entity.Currency;
-import com.taitly.currencyexchange.exception.DatabaseException;
-import com.taitly.currencyexchange.util.ConnectionPoolManager;
 
 public class CurrencyDao {
     private static final CurrencyDao INSTANCE = new CurrencyDao();

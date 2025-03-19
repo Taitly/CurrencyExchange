@@ -1,14 +1,14 @@
 package com.taitly.currencyexchange.service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Optional;
-
 import com.taitly.currencyexchange.dao.ExchangeRateDao;
 import com.taitly.currencyexchange.dto.CurrencyExchangeDto;
 import com.taitly.currencyexchange.entity.Currency;
 import com.taitly.currencyexchange.entity.ExchangeRate;
 import com.taitly.currencyexchange.exception.DataNotFoundException;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Optional;
 
 public class CurrencyExchangeService {
     private static final CurrencyExchangeService INSTANCE = new CurrencyExchangeService();

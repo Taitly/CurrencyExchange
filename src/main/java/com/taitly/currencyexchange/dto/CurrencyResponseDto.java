@@ -5,4 +5,5 @@ public record CurrencyResponseDto(
         String code,
         String name,
         String sign
-) {}
+) {
+}

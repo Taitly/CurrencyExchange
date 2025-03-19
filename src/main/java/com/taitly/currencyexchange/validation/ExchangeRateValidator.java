@@ -1,9 +1,9 @@
 package com.taitly.currencyexchange.validation;
 
+import com.taitly.currencyexchange.exception.InvalidDataException;
+
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
-
-import com.taitly.currencyexchange.exception.InvalidDataException;
 
 public class ExchangeRateValidator {
     private static final String PAIR_CODE_REGEX = "^[A-Z]{3}[A-Z]{3}$";

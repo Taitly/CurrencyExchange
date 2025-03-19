@@ -7,4 +7,5 @@ public record ExchangeRateResponseDto(
         CurrencyResponseDto baseCurrency,
         CurrencyResponseDto targetCurrency,
         BigDecimal rate
-) {}
+) {
+}

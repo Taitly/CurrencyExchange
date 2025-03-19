@@ -1,9 +1,9 @@
 package com.taitly.currencyexchange.validation;
 
+import com.taitly.currencyexchange.exception.InvalidDataException;
+
 import java.util.Currency;
 import java.util.regex.Pattern;
-
-import com.taitly.currencyexchange.exception.InvalidDataException;
 
 public class CurrencyValidator {
     private static final String NAME_REGEX = "^[a-zA-Z]+(\\s+[a-zA-Z]+)*$";
